@@ -23,6 +23,7 @@ class User extends Authenticatable
     'email',
     'phone',
     'password',
+    'created_by',
 ];
 
 
@@ -48,4 +49,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(User::class, 'created_by', 'id')
+                    ->where('role', 'customer');
+    }
+
 }

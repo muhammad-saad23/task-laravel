@@ -3,13 +3,13 @@ import { Head, usePage } from '@inertiajs/react';
 import SubadminDashboard from './SubAdminDashboard';
 import AdminDashboard from './AdminDashboard';
 
-export default function Dashboard() {
-    const { auth } = usePage().props;
+export default function Dashboard({ }) {
+    const { auth,totalUsers,customers } = usePage().props;
     const user = auth?.user;
 
     if (!user?.role || (user.role !== 'admin' && user.role !== 'subadmin')) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white text-center">
+            <div className="min-h-screen  flex flex-col items-center justify-center bg-gray-900 text-white text-center">
                 <Head title="Dashboard" />
                 <h1 className="text-3xl font-bold mb-4">Welcome</h1>
                 <p className="text-gray-400 text-lg mb-6">
@@ -36,9 +36,9 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="py-8 px-6 bg-gray-900 min-h-screen text-white">
                 {user.role === 'admin' ? (
-                    <AdminDashboard user={user} auth={auth} />
+                    <AdminDashboard user={user} auth={auth}  />
                 ) : (
-                    <SubadminDashboard user={user} auth={auth} />
+                    <SubadminDashboard user={user} auth={auth}  />
                 )}
             </div>
         </AuthenticatedLayout>

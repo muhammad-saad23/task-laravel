@@ -18,7 +18,16 @@ class AuthController extends Controller
     
     public function dashboard()
     {
-        return inertia('Dashboard');
+        $subadmin = Auth::user();
+        $totalUsers = User::where('role', 'subadmin')->count();        
+        $customers = User::where('role', 'customer')->where('created_by',$subadmin->id)->count();
+        $totalCustomers = User::where('role', 'customer')->count();
+
+        return inertia::render('Dashboard',[
+            'totalUsers' => $totalUsers,
+            'customers' => $customers,
+            'totalCustomers' => $totalCustomers,
+        ]);
     }
 
     public function register()
@@ -61,17 +70,15 @@ class AuthController extends Controller
 
     public function loginStore(Request $request){
          $request->validate([
-            // 'role' => 'required|string|in:admin,subadmin,customer',
             'email' => 'required|email',
-            'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+            'password' => ['required', Password::min(8)->letters()->numbers()],
         ]);
 
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+            $user = Auth::User();
             
-
         session([
             'id' => $user->id,
             'role' => $user->role,

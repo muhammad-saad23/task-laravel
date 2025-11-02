@@ -30,7 +30,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['required', 'string', 'max:20'],
         ]);        
-        $userid=auth()->user()->id;
+        // $userid=auth()->user()->id;
 
         $user = User::create([
             'name' => $request->name,
@@ -38,30 +38,48 @@ class UserController extends Controller
             'phone' => $request->phone,
             'password' => Hash::make(Str::random(12)),
             'role' => 'customer',
-            'created_by' => $userid,
+            'created_by' => session('userid') ?? Auth::id(),
         ]);
 
         return redirect()->route('adduser')->with('success', 'User added successfully.');
     }
 
 
+public function UserList(Request $request)
+{
+    $role = session('role');
+    $userid = Auth::id();
 
-    public function UserList(Request $request)
-    {
-        $role =session('role');
-        $userid=session('userid');
+    if ($role === 'admin') {
+        $subadmins = User::where('role', 'subadmin')
+            ->withCount('customers')
+            ->with('customers')
+            ->get();
 
-        if ($role == 'admin') {
-            $users = User::where('id', '!=', $userid)->get();
-        }elseif ($role=='subadmin') {
-            $users = User::where('role','customer')->get();
-        }else {
-            $users = User::where('id',$userid)->get();            
-        }
-
-
-        return Inertia::render('List',[
-            'Users' => $users,
+        return inertia('List', [
+            'Subadmins' => $subadmins,
+            'viewMode' => 'admin',
         ]);
     }
+
+    if ($role === 'subadmin') {
+        $users = User::where('role', 'customer')
+            ->where('created_by', $userid)
+            ->withCount('customers')
+            ->with('customers')
+            ->get();
+
+        return inertia('List', [
+            'Users' => $users,
+            'viewMode' => 'subadmin',
+        ]);
+    }
+
+    return inertia('List', [
+        'Users' => [],
+        'viewMode' => 'none',
+    ]);
+}
+
+
 }

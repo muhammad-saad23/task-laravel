@@ -2,27 +2,31 @@ import React from 'react';
 // import Sidebar from '@/Pages/Shared/Sidebar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { BarChart3, Users, ShoppingBag, DollarSign } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 
-const AdminDashboard = ({ auth,user }) => {
+const AdminDashboard = ({ auth,}) => {
+  const { totalUsers,customers,totalCustomers } = usePage().props;
+  const user = auth.user;
+  // const totalUsers = auth.length || 0;
+
   return (
     
-    <div className="flex min-h-screen bg-gray-950 text-gray-100">
-      {/* <Sidebar role="admin" /> */}
+    <div className="flex min-h-screen text-gray-100">      
 
       <div className="flex-1 p-10">
-        <h1 className="text-3xl font-bold mb-6">Welcome, {auth.user.name} 👋</h1>
+        <h1 className="text-3xl font-bold mb-6">Welcome, {user.name} 👋</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-10">
           <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col items-center">
             <Users size={36} className="text-blue-500 mb-3" />
-            <h3 className="text-lg font-semibold">Total Users</h3>
-            <p className="text-2xl font-bold mt-2">1,240</p>
+            <h3 className="text-lg font-semibold">Total Subadmins</h3>
+            <p className="text-2xl font-bold mt-2">{totalUsers||0}</p>
           </div>
 
           <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col items-center">
             <ShoppingBag size={36} className="text-green-500 mb-3" />
-            <h3 className="text-lg font-semibold">Products</h3>
-            <p className="text-2xl font-bold mt-2">532</p>
+            <h3 className="text-lg font-semibold">Total Customers</h3>
+            <p className="text-2xl font-bold mt-2">{totalCustomers||0}</p>
           </div>
 
           <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-lg flex flex-col items-center">
